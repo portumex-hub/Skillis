@@ -1,0 +1,19 @@
+theme: jekyll-theme-minimal
+title: "Free AI Bible 2026 — Free AI APIs & Tools for Developers"
+description: "The ultimate directory of free AI APIs, LLMs, image generation, model hosting, and developer tools in 2026. No credit card required. 700+ verified resources."
+url: "https://abbosaliboev.github.io/free-ai-bible"
+baseurl: "/free-ai-bible"
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+author: abbosaliboev
+
+twitter:
+  card: summary_large_image
+
+social:
+  name: Free AI Bible
+  links:
+    - https://github.com/abbosaliboev/free-ai-bible

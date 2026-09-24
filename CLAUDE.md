@@ -2,9 +2,13 @@
 
 ## Repository state
 
-`portumex-hub/Skillis` is currently empty — no commits, no source files, only
-an initialized `.git`. There is no codebase, build system, or test suite to
-document yet. Update this file once real project structure exists.
+No build system or test suite yet. Contents:
+
+- `free-ai-bible/` — vendored snapshot of
+  https://github.com/abbosaliboev/free-ai-bible (MIT). Markdown directory of
+  free AI APIs plus small Python templates (`templates/`) and setup scripts
+  (`scripts/`). Provenance in `free-ai-bible/SOURCE.md`; do not edit as if
+  it were original work — re-sync from upstream instead.
 
 ## Local environment note
 

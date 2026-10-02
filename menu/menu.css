@@ -1,0 +1,93 @@
+:root{
+  --rosso:#880E13; --rosso-d:#5E0A0D; --oro:#B9A537; --oro-d:#8A7A1F;
+  --crema:#FBF6EA; --crema-2:#F3EAD2; --ink:#2B2421; --muted:#6E625B;
+  --serif:'Fraunces',Georgia,serif; --sans:'Jost','Helvetica Neue',Arial,sans-serif;
+}
+@page{size:8.5in 11in;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#d9d2c4}
+body{font-family:var(--sans);color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:8.5in;height:11in;margin:0 auto 24px;position:relative;overflow:hidden;background:var(--crema);page-break-after:always;break-after:page}
+@media print{html,body{background:none}.page{margin:0}}
+@media screen and (max-width:8.5in){.page{transform-origin:top left}}
+
+/* ---------- Portada ---------- */
+.cover{background:var(--rosso);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--crema);text-align:center}
+.cover::before{content:"";position:absolute;inset:.35in;border:1.5px solid var(--oro);border-radius:4px;pointer-events:none}
+.cover::after{content:"";position:absolute;inset:.45in;border:.5px solid rgba(185,165,55,.55);border-radius:2px;pointer-events:none}
+.cover-awning{position:absolute;top:0;left:0;right:0;height:.35in;
+  background:repeating-linear-gradient(90deg,var(--oro) 0 .5in,var(--crema) .5in 1in)}
+.cover .logo{width:4.6in;height:4.6in;filter:drop-shadow(0 10px 24px rgba(0,0,0,.35))}
+.cover .tagline{font-family:var(--serif);font-style:italic;font-size:30pt;margin-top:.45in;letter-spacing:.01em}
+.cover .rule{display:flex;align-items:center;gap:14px;margin:.25in 0;color:var(--oro)}
+.cover .rule span{width:1.3in;height:1px;background:var(--oro)}
+.cover .rule i{font-style:normal;font-size:12pt}
+.cover .motto{font-family:var(--serif);font-size:13pt;opacity:.85}
+.cover-foot{position:absolute;bottom:.75in;font-size:9pt;letter-spacing:.32em;text-transform:uppercase;color:var(--oro)}
+
+/* ---------- Páginas interiores ---------- */
+.inner{padding:.62in .6in .55in}
+.awning{position:absolute;top:0;left:0;right:0;height:.2in;
+  background:repeating-linear-gradient(90deg,var(--rosso) 0 .42in,var(--crema) .42in .84in)}
+.awning::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px;
+  background:radial-gradient(circle at 50% 0,var(--rosso) 5px,transparent 5.5px) 0 0/.84in 6px repeat-x}
+header{display:flex;align-items:center;gap:8px;font-size:7.5pt;letter-spacing:.28em;text-transform:uppercase;color:var(--oro-d);margin-bottom:.22in}
+header .mark{width:.36in;height:.36in;margin-right:6px}
+header .dot{color:var(--rosso)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:.42in}
+.cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.32in;margin-top:.12in;padding-top:.14in;border-top:1px solid var(--crema-2)}
+
+.sec{margin-bottom:.3in}
+h2{font-family:var(--serif);font-style:italic;font-weight:600;font-size:34pt;line-height:1;color:var(--rosso);letter-spacing:-.01em}
+h3{font-family:var(--serif);font-style:italic;font-weight:600;font-size:19pt;line-height:1;color:var(--rosso)}
+h4{font-family:var(--serif);font-style:italic;font-weight:400;font-size:15pt;color:var(--oro-d);margin:.08in 0 .03in}
+.sub{font-size:7.8pt;letter-spacing:.24em;text-transform:uppercase;color:var(--oro-d);margin:.07in 0 .2in;padding-bottom:.06in;
+  background:linear-gradient(var(--oro),var(--oro)) left bottom/.45in 1.5px no-repeat}
+
+.dish{margin-bottom:.15in;break-inside:avoid}
+.dish.sm{margin-bottom:.15in}
+.dn{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+.name{font-family:var(--serif);font-weight:600;font-size:13pt;color:var(--ink)}
+.dish.sm .name{font-size:12pt}
+.price{font-family:var(--sans);font-weight:600;font-size:11.4pt;color:var(--rosso)}
+.dn .price::before{content:"";display:inline-block;width:10px;height:1px;background:var(--oro);vertical-align:middle;margin-right:6px}
+.desc{font-size:9.6pt;line-height:1.38;color:var(--muted);margin-top:1px}
+.dish.sm .desc{font-size:9.2pt}
+
+.tag{font-family:var(--sans);font-size:6.3pt;font-weight:600;letter-spacing:.14em;text-transform:uppercase;border-radius:20px;padding:1.5px 6px;line-height:1.2;transform:translateY(-1px)}
+.tag-casa{background:var(--rosso);color:var(--crema)}
+.tag-v{background:none;color:#5E7A2E;border:1px solid #5E7A2E;padding:0 4px;letter-spacing:0;text-transform:lowercase;font-size:7pt;border-radius:50%}
+.tag-hot{background:none;color:var(--rosso);border:1px solid var(--rosso)}
+
+.feature{background:var(--crema-2);border-left:3px solid var(--oro);padding:.1in .12in;margin-top:.06in;border-radius:0 4px 4px 0}
+.opts{display:flex;flex-direction:column;gap:3px;margin-top:6px;font-size:10pt}
+.opts span{display:flex;justify-content:space-between;border-bottom:1px dotted rgba(138,122,31,.35);padding-bottom:1px}
+.opts b{color:var(--rosso);font-weight:600}
+
+.dolci{margin-top:.12in;padding:.14in .16in .04in;border:1px solid var(--oro);border-radius:4px;position:relative}
+.dolci h2{font-size:24pt}
+
+.legend{position:absolute;left:.6in;bottom:.62in;font-size:7.4pt;color:var(--muted);display:flex;align-items:center;gap:5px}
+
+/* Vinos */
+.wine-head,.wrow{display:grid;grid-template-columns:1fr .55in .6in;align-items:baseline;gap:4px}
+.wine-head{font-size:6.6pt;letter-spacing:.2em;text-transform:uppercase;color:var(--oro-d);text-align:right;margin-bottom:-.06in}
+.wrow{margin-bottom:.1in}
+.wrow .name{font-size:11.4pt}
+.wrow .reg{font-size:7.6pt;letter-spacing:.14em;text-transform:uppercase;color:var(--oro-d)}
+.wrow .desc{font-size:8.8pt}
+.wrow .price{text-align:right;font-size:11pt}
+
+/* Listas simples */
+.rows .row{display:flex;justify-content:space-between;font-size:10.6pt;padding:4px 0;border-bottom:1px dotted rgba(138,122,31,.3)}
+.rows .price{font-size:10.6pt}
+
+footer{position:absolute;left:.6in;right:.6in;bottom:.3in;display:flex;justify-content:space-between;font-size:7pt;letter-spacing:.06em;color:var(--muted);border-top:1px solid var(--oro);padding-top:6px}
+.pnum{position:absolute;right:.6in;top:.36in;font-family:var(--serif);font-style:italic;color:var(--oro-d);font-size:10pt}
+.cover .logo.sm{width:2.6in;height:2.6in}
+.back .tagline{font-size:24pt}
+.rows{margin-bottom:.1in}
+.price.nw{white-space:nowrap}
+.cols.wide{grid-template-columns:1.15fr 1fr}
+.wrow .meta{font-size:8pt;margin-top:1px}
+.wrow .prod{font-size:8.6pt;color:var(--ink);letter-spacing:0;text-transform:none;margin-left:4px}

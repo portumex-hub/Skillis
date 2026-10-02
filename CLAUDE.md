@@ -2,9 +2,15 @@
 
 ## Repository state
 
-`portumex-hub/Skillis` is currently empty — no commits, no source files, only
-an initialized `.git`. There is no codebase, build system, or test suite to
-document yet. Update this file once real project structure exists.
+`portumex-hub/Skillis` holds design deliverables for the Divino Peccato
+restaurant project. No build system or test suite.
+
+- `menu/` — printable menu (Letter, 6 pages). `build_menu.py` reads final
+  prices from column AC ("PVP final con IVA") of the `Mezcla de Ventas` sheet
+  in the business-plan Excel and writes `divino_peccato_menu.html`; the PDF is
+  rendered from that HTML with Playwright/Chromium. Styles in `menu.css`,
+  fonts (Fraunces, Jost — OFL) in `menu/fonts/`.
+  Rebuild: `pip install openpyxl && python3 menu/build_menu.py <excel.xlsx> menu/logo_divino_peccato.png`
 
 ## Local environment note
 

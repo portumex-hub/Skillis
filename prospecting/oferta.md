@@ -16,6 +16,13 @@ Administración · Servicio · Barra · Cocina · Pedidos/compras · Gestión gl
 "Te ayudo a ordenar y fortalecer tu negocio gastronómico con soluciones prácticas para tu menú,
 costos y operación, respetando el concepto y la realidad de tu proyecto."
 
+## Paquete de entrada: Diagnóstico
+- Precio: $5,000 MXN (PENDIENTE: confirmar si es + IVA).
+- Alcance propuesto (PENDIENTE: validar con André): visita a operación, costeo de los
+  10 platillos más vendidos, ingeniería de menú sobre ventas reales, y reporte de
+  prioridades con 3–5 acciones concretas y medibles.
+- El precio NO se menciona en el primer mensaje; se presenta en la llamada.
+
 ## Llamado a la acción del primer contacto
 Una llamada o visita de 20 minutos, sin costo, para revisar 1 problema concreto.
 
@@ -25,5 +32,5 @@ Una llamada o visita de 20 minutos, sin costo, para revisar 1 problema concreto.
 - Respetar la identidad y el estilo del negocio.
 
 ## PENDIENTE (definir antes de escalar)
-- Precio y formato de cada paquete (diagnóstico, implementación, acompañamiento mensual).
+- Precio y formato de los paquetes siguientes (implementación, acompañamiento mensual).
 - 1–2 casos con resultado medible para usar como prueba social.

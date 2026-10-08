@@ -21,7 +21,8 @@ Early-stage repo. Current contents:
 - `.github/workflows/prospecting.yml` — Mondays 07:00 Monterrey (and manual
   dispatch) runs the pipeline and uploads the approval CSV as an artifact.
   Needs repo secrets `OUTSCRAPER_API_KEY` and `ANTHROPIC_API_KEY`; skips if unset.
-- `.claude/settings.json` — SessionStart hook installs `requirements.txt`.
+- `.claude/settings.json` — SessionStart hook (`.claude/hooks/session-start.sh`)
+  installs `requirements.txt` into `.venv` and puts it on PATH.
 - `.env.example` — required env vars. Real API keys must never
   be committed; set them as environment secrets.
 

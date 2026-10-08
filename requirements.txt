@@ -1,0 +1,6 @@
+# Outscraper Python SDK, pinned to the v6.0.5 tag of the official repo.
+outscraper @ git+https://github.com/outscraper/outscraper-python.git@v6.0.5
+anthropic==1.12.1
+pydantic>=2,<3
+# Lemlist API client (tiny, unmaintained since 2024) pinned to an exact commit.
+lemlist @ git+https://github.com/oneryalcin/lemlist.git@c03f9411f3b7e9f38c16058700a184d4ce03a96b

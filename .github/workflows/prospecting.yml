@@ -1,0 +1,62 @@
+name: Prospecting run
+
+# Generates the weekly approval queue. It never sends messages: download the
+# CSV artifact, mark `aprobado = si`, then run scripts/export_approved.py.
+on:
+  schedule:
+    - cron: "0 13 * * 1" # Mondays 07:00 Monterrey (UTC-6)
+  workflow_dispatch:
+    inputs:
+      categories:
+        description: "Categories (space separated)"
+        default: "restaurante cafetería panadería"
+      cities:
+        description: "Cities (quote multi-word names)"
+        default: '"San Pedro Garza García" Monterrey'
+      max_prospects:
+        description: "Max places sent to reviews + Claude"
+        default: "15"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      OUTSCRAPER_API_KEY: ${{ secrets.OUTSCRAPER_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - name: Check secrets
+        id: secrets
+        run: |
+          if [ -z "$OUTSCRAPER_API_KEY" ] || [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::warning::OUTSCRAPER_API_KEY / ANTHROPIC_API_KEY repo secrets are not set; skipping."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.secrets.outputs.ok == 'true'
+        uses: actions/checkout@v4
+      - if: steps.secrets.outputs.ok == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - if: steps.secrets.outputs.ok == 'true'
+        run: pip install -r requirements.txt
+      - if: steps.secrets.outputs.ok == 'true'
+        env:
+          CATEGORIES: ${{ inputs.categories || 'restaurante cafetería panadería' }}
+          CITIES: ${{ inputs.cities || '"San Pedro Garza García" Monterrey' }}
+          MAX_PROSPECTS: ${{ inputs.max_prospects || '15' }}
+        run: |
+          eval "set -- $CITIES"
+          python scripts/prospect_pipeline.py \
+            --categories $CATEGORIES \
+            --cities "$@" \
+            --limit 10 \
+            --max-prospects "$MAX_PROSPECTS" \
+            --contacts
+      - if: steps.secrets.outputs.ok == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cola-aprobacion
+          path: output/
+          retention-days: 30

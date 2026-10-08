@@ -16,6 +16,12 @@ Early-stage repo. Current contents:
   an Instantly/Lemlist email CSV and a manual-send list.
 - `prospecting/make_scenario.md` — the same flow as two Make scenarios
   (draft, then send-approved).
+- `tests/` — stdlib `unittest` suite: `python -m unittest discover -s tests`.
+- `.github/workflows/ci.yml` — compiles scripts and runs the tests on PRs.
+- `.github/workflows/prospecting.yml` — Mondays 07:00 Monterrey (and manual
+  dispatch) runs the pipeline and uploads the approval CSV as an artifact.
+  Needs repo secrets `OUTSCRAPER_API_KEY` and `ANTHROPIC_API_KEY`; skips if unset.
+- `.claude/settings.json` — SessionStart hook installs `requirements.txt`.
 - `.env.example` — required env vars. Real API keys must never
   be committed; set them as environment secrets.
 
@@ -26,7 +32,7 @@ python3 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-No test suite yet. Hard rule from the owner: no prospect message is sent without
+Hard rule from the owner: no prospect message is sent without
 their explicit approval — keep the approval gate in any new sending path.
 Outscraper bills per returned record — keep `--limit` low
 when testing.

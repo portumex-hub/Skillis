@@ -54,5 +54,19 @@ class ExportApprovedTest(unittest.TestCase):
         self.assertEqual([r["negocio"] for r in manual], ["C"])
 
 
+class LemlistPushTest(unittest.TestCase):
+    def test_pushes_only_given_rows_with_custom_vars(self):
+        import export_approved
+        from unittest import mock
+
+        rows = [{"email": "a@a.mx", "negocio": "A", "asunto": "Hola", "mensaje": "Msg"}]
+        with mock.patch("lemlist.Client.send_request", return_value={"_id": "lea_1"}) as send:
+            pushed = export_approved.push_to_lemlist(rows, "cam_1", "key")
+        self.assertEqual(pushed, 1)
+        _, kwargs = send.call_args
+        self.assertEqual(kwargs["endpoint"], "/campaigns/cam_1/leads")
+        self.assertEqual(kwargs["payload"]["mensaje"], "Msg")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -13,7 +13,9 @@ Early-stage repo. Current contents:
   each place 0–100 against `prospecting/icp.md` / `prospecting/oferta.md` and drafts
   a first message → approval-queue CSV in `output/`. It never sends anything.
 - `scripts/export_approved.py` — exports only rows marked `aprobado = si`, split into
-  an Instantly/Lemlist email CSV and a manual-send list.
+  an Instantly/Lemlist email CSV and a manual-send list. `--lemlist-campaign ID`
+  also adds the approved email rows to that Lemlist campaign (needs
+  `LEMLIST_API_KEY`; uses the `lemlist` client pinned to a commit).
 - `prospecting/make_scenario.md` — the same flow as two Make scenarios
   (draft, then send-approved).
 - `tests/` — stdlib `unittest` suite: `python -m unittest discover -s tests`.

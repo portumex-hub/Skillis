@@ -1,2 +1,4 @@
 # Outscraper Python SDK, pinned to the v6.0.5 tag of the official repo.
 outscraper @ git+https://github.com/outscraper/outscraper-python.git@v6.0.5
+anthropic==1.12.1
+pydantic>=2,<3

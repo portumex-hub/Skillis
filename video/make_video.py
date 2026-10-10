@@ -1,80 +1,99 @@
 import subprocess, numpy as np, wave, os, sys
-P=sys.argv[1]; IMG=sys.argv[2]; OUT=sys.argv[3]
-M=P+'/media/ppt/media/'
-os.makedirs(OUT+'/clips',exist_ok=True)
-W,H,FPS=1920,1080,30
+P,C,OUT=sys.argv[1:4]; M=P+'/media/ppt/media/'
+os.makedirs(OUT+'/clips',exist_ok=True); W,H,FPS=1920,1080,30
 def run(c): subprocess.run(c,check=True)
-# (tipo, archivo, segundos, texto)
-seq=[('logo',M+'image-1-2.jpg',4)]
-for i in range(1,6): seq.append(('vert',f'{IMG}/{i}.jpg',3.2))
-for f in ['image-3-2.jpg','image-3-1.jpg','image-2-1.jpg','image-3-3.jpg']: seq.append(('vert',M+f,3.2))
-for f in ['image-8-2.jpg','image-8-4.jpg','image-8-1.jpg']: seq.append(('photo',M+f,3.2))
+seq=[('logo',M+'image-1-2.jpg',3.5)]
+for n in ['flat','ig1','ig5','ig2','ig3','ig4','costra','combo']: seq.append(('card',f'{C}/{n}.png',3.6))
+for f in ['image-8-2.jpg','image-8-4.jpg','image-8-1.jpg']: seq.append(('photo',M+f,3.0))
 dense={5,6,7,9,10,11,13,14,16,19,21}
 for s in range(1,22):
     seq.append(('slide',f'{P}/hd-{s:02d}.png',8 if s in dense else 6))
     if s==4: seq += [('photo',M+'image-4-2.jpg',3),('photo',M+'image-4-1.jpg',3)]
     if s==18: seq += [('photo',M+'image-1-1.jpg',3)]
 seq.append(('logo',M+'image-1-2.jpg',5))
-F=0.4; clips=[]
+F=0.35; clips=[]
 for n,(k,f,d) in enumerate(seq):
     o=f'{OUT}/clips/{n:03d}.mp4'; fr=int(d*FPS)
     fade=f'fade=t=in:st=0:d={F},fade=t=out:st={d-F}:d={F}'
-    if k=='slide':
-        vf=f'scale={W}:{H},{fade}'
-    elif k=='logo':
-        vf=f'scale=-2:600,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=0x5A9E32,{fade}'
-    elif k=='photo':
-        vf=(f'scale=2400:-2,crop=2400:1350,zoompan=z=\'1+0.10*on/{fr}\':x=\'iw/2-iw/zoom/2\':y=\'ih/2-ih/zoom/2\':d=1:s={W}x{H}:fps={FPS},{fade}')
-    else: # vertical: fondo desenfocado + foto al centro
-        vf=(f'split[a][b];[a]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=30:3,eq=brightness=-0.15[bg];'
-            f'[b]scale=-2:1000[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2,'
-            f'zoompan=z=\'1+0.06*on/{fr}\':x=\'iw/2-iw/zoom/2\':y=\'ih/2-ih/zoom/2\':d=1:s={W}x{H}:fps={FPS},{fade}')
-    run(['ffmpeg','-v','error','-y','-loop','1','-i',f,'-t',str(d),'-r',str(FPS),'-filter_complex' if k=='vert' else '-vf',vf,
-         '-c:v','libx264','-preset','veryfast','-crf','20','-pix_fmt','yuv420p',o])
+    if k=='slide': vf=f'scale={W}:{H},{fade}'
+    elif k=='logo': vf=f'scale=-2:600,pad={W}:{H}:(ow-iw)/2:(oh-ih)/2:color=0x5A9E32,{fade}'
+    else:
+        pre='scale=2400:-2,crop=2400:1350,' if k=='photo' else 'scale=2400:1350,'
+        vf=pre+f"zoompan=z='1+0.07*on/{fr}':x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2':d=1:s={W}x{H}:fps={FPS},{fade}"
+    run(['ffmpeg','-v','error','-y','-loop','1','-i',f,'-t',str(d),'-r',str(FPS),'-vf',vf,'-c:v','libx264','-preset','veryfast','-crf','20','-pix_fmt','yuv420p',o])
     clips.append(o)
-total=sum(d for *_,d in seq); print('dur',total)
+total=sum(x[2] for x in seq); print('dur',total)
 open(f'{OUT}/list.txt','w').write(''.join(f"file '{c}'\n" for c in clips))
-# ---------- Música sintetizada (A mayor, 104 BPM, estilo huapango/norteño ligero) ----------
-sr=44100; bpm=104; beat=60/bpm; N=int((total+1)*sr); mix=np.zeros(N)
-rng=np.random.default_rng(7)
-def ks(freq,dur,dec=0.996):
-    n=int(dur*sr); p=int(sr/freq); buf=rng.uniform(-1,1,p); out=np.zeros(n)
-    for i in range(n):
-        out[i]=buf[i%p]; buf[i%p]=dec*0.5*(buf[i%p]+buf[(i+1)%p])
-    return out
-def add(sig,t,g):
+# ---- Música: indie/alt-pop alegre, 124 BPM, Re mayor, I-V-vi-IV ----
+sr=44100; bpm=124; b=60/bpm; N=int((total+2)*sr); L=np.zeros(N); R=np.zeros(N)
+rng=np.random.default_rng(3)
+f=lambda m:440*2**((m-69)/12)
+def add(sig,t,g,pan=0.0):
     i=int(t*sr); j=min(N,i+len(sig))
-    if i<N: mix[i:j]+=g*sig[:j-i]
-note=lambda m:440*2**((m-69)/12)
-chords={'A':[57,61,64,69],'D':[57,62,66,69],'E':[56,59,64,68],'F#m':[57,61,66,69]}
-roots={'A':45,'D':38,'E':40,'F#m':42}
-prog=['A','A','D','E','A','F#m','D','E']
+    if i>=N: return
+    L[i:j]+=g*(1-max(pan,0))*sig[:j-i]; R[i:j]+=g*(1+min(pan,0))*sig[:j-i]
+def env(n,a=0.005,dec=8.0):
+    t=np.arange(n)/sr; e=np.exp(-dec*t); k=int(a*sr); e[:k]*=np.linspace(0,1,k); return e
+def lp(x,a):  # one-pole lowpass
+    y=np.empty_like(x); s=0.0
+    for i,v in enumerate(x): s+=a*(v-s); y[i]=s
+    return y
 cache={}
-def pluck(m,d):
-    k=(m,d)
-    if k not in cache: cache[k]=ks(note(m),d)
-    return cache[k]
-kick=np.sin(2*np.pi*np.cumsum(np.linspace(120,45,int(.18*sr)))/sr)*np.exp(-np.linspace(0,8,int(.18*sr)))
-shk=rng.uniform(-1,1,int(.05*sr))*np.exp(-np.linspace(0,10,int(.05*sr)))
-t=0; bar=0
+def saw(m,dur,dec,det=0.12,cut=0.18):
+    key=('s',m,dur,dec)
+    if key in cache: return cache[key]
+    n=int(dur*sr); t=np.arange(n)/sr; x=np.zeros(n)
+    for dv in (-det,0,det):
+        ph=(t*f(m+dv))%1; x+=2*ph-1
+    x=lp(x/3,cut)*env(n,0.004,dec); cache[key]=x; return x
+def pluck(m,dur):  # guitarra limpia brillante (Karplus-Strong)
+    key=('p',m,dur)
+    if key in cache: return cache[key]
+    n=int(dur*sr); p=int(sr/f(m)); buf=rng.uniform(-1,1,p); out=np.zeros(n)
+    for i in range(n): out[i]=buf[i%p]; buf[i%p]=0.997*0.5*(buf[i%p]+buf[(i+1)%p])
+    cache[key]=out; return out
+def kick():
+    n=int(.25*sr); t=np.arange(n)/sr; fr=50+110*np.exp(-t*30)
+    return np.sin(2*np.pi*np.cumsum(fr)/sr)*np.exp(-t*12)
+def snare():
+    n=int(.2*sr); t=np.arange(n)/sr
+    return (0.6*rng.uniform(-1,1,n)*np.exp(-t*22)+0.4*np.sin(2*np.pi*190*t)*np.exp(-t*30))
+def hat(o=False):
+    n=int((.18 if o else .04)*sr); x=rng.uniform(-1,1,n); x=x-lp(x,0.5); return x*np.exp(-np.arange(n)/sr*(14 if o else 90))
+def clap():
+    n=int(.15*sr); x=rng.uniform(-1,1,n); e=np.zeros(n)
+    for d in (0,.01,.02): k=int(d*sr); e[k:]+=np.exp(-np.arange(n-k)/sr*35)
+    return x*e*0.5
+K,S,HC,HO,CL=kick(),snare(),hat(),hat(True),clap()
+prog=[(62,'D',[62,66,69]),(57,'A',[61,64,69]),(59,'Bm',[62,66,71]),(55,'G',[62,67,71])]
+riff=[0,2,4,2, 7,4,2,4]  # índices de escala Re mayor para el arpegio/hook
+scale=[62,64,66,67,69,71,73,74,76,78,79,81]
+bar=0; t=0.0; intro=4; total_bars=int(total/(4*b))+1
 while t<total:
-    c=prog[bar%len(prog)]
-    for b in range(4):
-        tb=t+b*beat
-        add(kick,tb,0.5 if b in (0,2) else 0.25)
-        add(pluck(roots[c]+(0 if b%2==0 else 7),beat*1.5),tb,0.45)  # bajo alternado (tonica-quinta)
-        for s8 in (0,0.5):
-            add(shk,tb+s8*beat,0.12 if s8 else 0.07)
-            # rasgueo: arriba/abajo con micro-desfase
-            ns=chords[c] if s8==0 else chords[c][::-1]
-            for k,m in enumerate(ns): add(pluck(m+12,beat*0.9),tb+s8*beat+k*0.012,0.16 if s8==0 else 0.10)
-        # melodía simple de requinto cada 2 barras
-        if bar%2==1 and b in (1,3): add(pluck(chords[c][2]+24,beat),tb+beat*0.25,0.12)
-    t+=4*beat; bar+=1
-mix=mix[:int(total*sr)]
-env=np.ones_like(mix); fi=int(1.5*sr); fo=int(3*sr)
-env[:fi]=np.linspace(0,1,fi); env[-fo:]=np.linspace(1,0,fo)
-mix=mix*env; mix=np.tanh(1.3*mix/np.max(np.abs(mix)))*0.85
-st=np.stack([mix,np.roll(mix,int(.011*sr))*0.9],1)
+    root,_,ch=prog[bar%4]; full = intro<=bar<total_bars-2
+    for be in range(4):
+        tb=t+be*b
+        if bar>=2: add(K,tb,0.85)
+        if bar>=2 and be in (1,3): add(S,tb,0.45); add(CL,tb,0.35,0.2)
+        for e8 in range(2):
+            te=tb+e8*b/2
+            add(HC if e8==0 else HO,te,0.10 if e8==0 else 0.07,-0.3)
+            # bajo en corcheas (indie driving)
+            add(saw(root-24,b/2*0.95,6,0.05,0.08),te,0.55)
+            # guitarra rítmica en contratiempo
+            if e8==1 and bar>=1:
+                for k,m in enumerate(ch): add(pluck(m,b*0.6),te+k*0.008,0.14,-0.5)
+        # pad brillante
+        if be==0 and full:
+            for m in ch: add(saw(m+12,4*b,0.6,0.15,0.06),tb,0.07,0.4)
+    # hook melódico (sintetizador tipo lead) en compases pares
+    if full:
+        for i,ix in enumerate(riff):
+            m=scale[(ix+[0,4,5,3][bar%4])%len(scale)]+12
+            add(saw(m,b*0.45,7,0.08,0.25),t+i*b/2,0.11,0.3)
+    t+=4*b; bar+=1
+n=int(total*sr); mix=np.stack([L[:n],R[:n]],1)
+fi,fo=int(1*sr),int(3*sr); g=np.ones(n); g[:fi]=np.linspace(0,1,fi); g[-fo:]=np.linspace(1,0,fo)
+mix*=g[:,None]; mix=np.tanh(1.6*mix/np.max(np.abs(mix)))*0.9
 with wave.open(f'{OUT}/music.wav','wb') as w:
-    w.setnchannels(2);w.setsampwidth(2);w.setframerate(sr);w.writeframes((st*32767).astype(np.int16).tobytes())
+    w.setnchannels(2);w.setsampwidth(2);w.setframerate(sr);w.writeframes((mix*32767).astype(np.int16).tobytes())
